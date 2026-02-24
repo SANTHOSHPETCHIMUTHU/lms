@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { ShieldCheck, CreditCard, CheckCircle2, XCircle, AlertTriangle, Video, Loader2, Users } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import api from "@/lib/api";
 import { toast } from "sonner";
 
@@ -14,6 +14,11 @@ export default function KycVerification() {
   const [customers, setCustomers] = useState<any[]>([]);
   const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  // Video KYC State
+  const [isVideoActive, setIsVideoActive] = useState(false);
+  const [stream, setStream] = useState<MediaStream | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const [panNumber, setPanNumber] = useState("");
   const [panVerified, setPanVerified] = useState(false);
@@ -118,6 +123,41 @@ export default function KycVerification() {
     }
   };
 
+  const startVideo = async () => {
+    try {
+      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+      setStream(mediaStream);
+      if (videoRef.current) {
+        videoRef.current.srcObject = mediaStream;
+      }
+      setIsVideoActive(true);
+      toast.success("Camera Access Granted");
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+      toast.error("Could not access camera. Please allow permissions.");
+    }
+  };
+
+  const stopVideo = () => {
+    if (stream) {
+      stream.getTracks().forEach(track => track.stop());
+      setStream(null);
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+    setIsVideoActive(false);
+  };
+
+  useEffect(() => {
+    return () => {
+      // Cleanup: stop stream when unmounting
+      if (stream) {
+        stream.getTracks().forEach(track => track.stop());
+      }
+    };
+  }, [stream]);
+
   const getScoreStatus = (score: number) => {
     if (score >= 700) return { label: "Eligible", color: "bg-success/10 text-success border-success/20", icon: CheckCircle2 };
     if (score >= 600) return { label: "Conditional", color: "bg-warning/10 text-warning border-warning/20", icon: AlertTriangle };
@@ -221,10 +261,32 @@ export default function KycVerification() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex h-32 flex-col items-center justify-center rounded-xl border-2 border-dashed bg-muted/30">
-                <Video className="h-8 w-8 text-muted-foreground" />
-                <p className="mt-2 text-sm text-muted-foreground">Video KYC / Face Match</p>
-                <Button variant="outline" size="sm" className="mt-2">Start Video KYC</Button>
+              <div className="relative flex h-48 flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed bg-muted/30">
+                {isVideoActive ? (
+                  <video
+                    ref={videoRef}
+                    autoPlay
+                    playsInline
+                    className="h-full w-full object-cover"
+                  />
+                ) : (
+                  <>
+                    <Video className="h-8 w-8 text-muted-foreground" />
+                    <p className="mt-2 text-sm text-muted-foreground">Video KYC / Face Match</p>
+                  </>
+                )}
+
+                <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-2 px-4">
+                  {!isVideoActive ? (
+                    <Button variant="outline" size="sm" className="bg-background" onClick={startVideo}>
+                      Start Video KYC
+                    </Button>
+                  ) : (
+                    <Button variant="destructive" size="sm" onClick={stopVideo}>
+                      Stop Camera
+                    </Button>
+                  )}
+                </div>
               </div>
             </CardContent>
           </Card>
