@@ -5,7 +5,7 @@ from app.core.database import SessionLocal
 from app.models.document import Document
 from app.models.customer import Customer
 from app.models.application import LoanApplication
-from app.schemas.document import UploadDocumentRequest, VerifyDocumentRequest
+from app.schemas.document import UploadDocumentRequest, VerifyDocumentRequest, EmploymentUpdateRequest
 from app.models.customer import EmploymentDetails
 from app.models.document import Document
 from app.models.processing import ProcessingProgress   # create model
@@ -58,6 +58,24 @@ def verify_document(data: VerifyDocumentRequest, db: Session = Depends(get_db)):
     db.commit()
 
     return {"message": "Document updated"}
+@router.post("/employment")
+def update_employment(data: EmploymentUpdateRequest, db: Session = Depends(get_db)):
+    emp = db.query(EmploymentDetails).filter(EmploymentDetails.customer_id == data.customer_id).first()
+    
+    if not emp:
+        emp = EmploymentDetails(customer_id=data.customer_id)
+        db.add(emp)
+    
+    emp.company_name = data.company_name
+    emp.designation = data.designation
+    emp.experience_years = data.experience_years
+    emp.monthly_income = data.monthly_income
+    emp.employment_type = data.employment_type
+    
+    db.commit()
+    db.refresh(emp)
+    
+    return {"message": "Employment details updated", "employment_id": emp.id}
 
 @router.get("/check/{customer_id}")
 def check_documents(customer_id: int, db: Session = Depends(get_db)):

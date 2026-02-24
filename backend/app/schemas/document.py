@@ -10,3 +10,11 @@ class VerifyDocumentRequest(BaseModel):
     document_id: int
     verified: bool
     processing_status: str   # APPROVED / REJECTED / PENDING
+
+class EmploymentUpdateRequest(BaseModel):
+    customer_id: int
+    company_name: str
+    designation: str
+    experience_years: int
+    monthly_income: float
+    employment_type: str
