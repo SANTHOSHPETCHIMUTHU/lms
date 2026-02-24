@@ -193,8 +193,11 @@ export default function KycVerification() {
           {/* PAN Verification */}
           <Card className="card-shadow">
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 font-heading text-base">
-                <CreditCard className="h-4 w-4 text-primary" /> PAN Verification
+              <CardTitle className="flex items-center justify-between font-heading text-base">
+                <div className="flex items-center gap-2">
+                  <CreditCard className="h-4 w-4 text-primary" /> PAN Verification
+                </div>
+                <Badge variant="outline" className="text-[10px] uppercase bg-muted/50">Simulated</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -210,12 +213,12 @@ export default function KycVerification() {
               </div>
               <Button className="w-full" onClick={handlePanVerify} disabled={isLoading || panVerified}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {panVerified ? <><CheckCircle2 className="mr-2 h-4 w-4" /> Verified</> : "Verify PAN"}
+                {panVerified ? <><CheckCircle2 className="mr-2 h-4 w-4" /> Verified</> : "Run Mock Verification"}
               </Button>
               {panVerified && (
                 <div className="rounded-lg border bg-success/5 p-3 text-sm">
-                  <p className="font-medium text-success">PAN Verified Successfully</p>
-                  <p className="text-muted-foreground">Status: Active | Records Matched</p>
+                  <p className="font-medium text-success">PAN Verified (Mock)</p>
+                  <p className="text-muted-foreground">Internal API check successful</p>
                 </div>
               )}
             </CardContent>
@@ -224,8 +227,11 @@ export default function KycVerification() {
           {/* Aadhaar Verification */}
           <Card className="card-shadow">
             <CardHeader className="pb-3">
-              <CardTitle className="flex items-center gap-2 font-heading text-base">
-                <ShieldCheck className="h-4 w-4 text-primary" /> Aadhaar Verification
+              <CardTitle className="flex items-center justify-between font-heading text-base">
+                <div className="flex items-center gap-2">
+                  <ShieldCheck className="h-4 w-4 text-primary" /> Aadhaar Verification
+                </div>
+                <Badge variant="outline" className="text-[10px] uppercase bg-muted/50">Simulated</Badge>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
@@ -240,14 +246,15 @@ export default function KycVerification() {
               </div>
               <div className="flex gap-2">
                 <Button variant="outline" className="flex-1" onClick={handleAadhaarVerify} disabled={isLoading || aadhaarVerified}>
-                  {aadhaarVerified ? "Verified" : "Send OTP"}
+                  {aadhaarVerified ? <><CheckCircle2 className="mr-2 h-4 w-4" /> Verified</> : "Simulate OTP"}
                 </Button>
                 <Input placeholder="OTP" maxLength={6} className="w-28" defaultValue="123456" />
               </div>
+              <p className="text-[10px] text-muted-foreground italic">Note: Use default OTP 123456 for demo</p>
               {aadhaarVerified && (
                 <div className="rounded-lg border bg-success/5 p-3 text-sm">
-                  <p className="font-medium text-success">Aadhaar Verified</p>
-                  <p className="text-muted-foreground">eKYC completed via OTP</p>
+                  <p className="font-medium text-success">Aadhaar Verified (Mock)</p>
+                  <p className="text-muted-foreground">eKYC simulated via holder service</p>
                 </div>
               )}
             </CardContent>
