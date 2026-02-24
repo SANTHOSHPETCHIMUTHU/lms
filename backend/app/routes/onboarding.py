@@ -21,6 +21,28 @@ def get_db():
     finally:
         db.close()
 
+@router.get("/customers")
+def get_customers(db: Session = Depends(get_db)):
+    customers = db.query(Customer).all()
+    return customers
+
+@router.get("/customers/{customer_id}")
+def get_customer(customer_id: int, db: Session = Depends(get_db)):
+    customer = db.query(Customer).filter(Customer.id == customer_id).first()
+    if not customer:
+        raise HTTPException(404, "Customer not found")
+    
+    address = db.query(CustomerAddress).filter(CustomerAddress.customer_id == customer_id).first()
+    employment = db.query(EmploymentDetails).filter(EmploymentDetails.customer_id == customer_id).first()
+    application = db.query(LoanApplication).filter(LoanApplication.customer_id == customer_id).first()
+
+    return {
+        "customer": customer,
+        "address": address,
+        "employment": employment,
+        "application": application
+    }
+
 @router.post("/basic")
 def create_basic(data: BasicInfoRequest, db: Session = Depends(get_db)):
 

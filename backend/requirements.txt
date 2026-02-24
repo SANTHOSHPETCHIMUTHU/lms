@@ -4,3 +4,8 @@ sqlalchemy
 pymysql
 python-dotenv
 pydantic
+email-validator
+python-jose[cryptography]
+passlib
+bcrypt
+python-dateutil

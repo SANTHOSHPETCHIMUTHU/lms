@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "CubeLoan360 Integrated Frontend and Backend",
   "scripts": {
-    "install:all": "npm install --prefix frontend && pip install -r backend/requirements.txt",
+    "install:all": "npm install --prefix frontend && python3 -m venv backend/venv && ./backend/venv/bin/pip install -r backend/requirements.txt",
     "dev:frontend": "npm run dev --prefix frontend",
-    "dev:backend": "cd backend && uvicorn app.main:app --reload",
+    "dev:backend": "cd backend && ./venv/bin/uvicorn app.main:app --reload",
     "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
   },
   "devDependencies": {
