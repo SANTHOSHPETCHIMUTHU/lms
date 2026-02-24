@@ -1,0 +1,14 @@
+{
+  "name": "cubeloan360-integrated",
+  "version": "1.0.0",
+  "description": "CubeLoan360 Integrated Frontend and Backend",
+  "scripts": {
+    "install:all": "npm install --prefix frontend && pip install -r backend/requirements.txt",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:backend": "cd backend && uvicorn app.main:app --reload",
+    "dev": "npx concurrently \"npm run dev:backend\" \"npm run dev:frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
